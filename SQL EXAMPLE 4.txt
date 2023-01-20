@@ -1,0 +1,2 @@
+6) Create a view emp from employee such that it contains only emp_no,emp_name and department_no.
+create view EMP as select SSN as emp_no,FNAME as emp_name,DNO as department_no from EMPLOYEE;

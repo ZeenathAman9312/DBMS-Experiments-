@@ -1,0 +1,25 @@
+5) Create a view that has project name, controlling department name, number of employees and total hours worked on the project for each project with more than one employee working on it.
+----------------------------------------------------------------------------
+CREATE VIEW PROJECT_VIEW(PNAME,DNAME,NOOFEMP,NOOFHRS) AS SELECT P.PNAME,D.DNAME,COUNT(W.ESSN),SUM(W.HOURS) FROM PROJECT P,DEPARTMENT D,WORKS_ON W WHERE P.DNO=D.DNO AND P.PNO=W.PNO GROUP BY W.PNO,P.PNAME,D.DNAME;
+----------------------------------------------------------------------------
+a) List the projects that are controlled by one department from this view.
+SELECT PNAME FROM PROJECT_VIEW WHERE DNAME='Research';
+
+b) List the managers of the controlling departments for all the projects.
+SELECT E.FNAME,E.LNAME,P.DNAME,P.PNAME FROM EMPLOYEE E,PROJECT_VIEW P,DEPARTMENT D WHERE E.SSN=D.MGRSSN AND D.DNAME=P.DNAME;
+
+c) Demonstrate one update operation on this view.
+ /* we can update only simple views which are not created  with  foreign key  or 
+  aggregate functions or any Group by clause */
+    /* Create table student(sno numeric,  sname varchar(20), course varchar(20));
+    Insert records in student table */
+ Create view  st_view(sname, course) as select  sname, course from student ;
+ Update st_view set  course=’CSE’ where sname=’Raju’
+
+d) List the Location of the controlling departments for all the projects.
+SELECT P.PNAME,PV.DNAME,D.DLOC FROM PROJECT_VIEW PV,DLOCATION D,PROJECT P WHERE P.DNO=D.DNO AND P.PNAME=PV.PNAME;
+
+e) Retrieve the data from the view.
+SELECT *FROM PROJECT_VIEW;
+
+

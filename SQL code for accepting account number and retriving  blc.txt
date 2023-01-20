@@ -1,0 +1,6 @@
+10) Write a procedure which accept the account number of a customer and retrieve the balance.
+create procedure custbalread(IN accnum int)
+     begin
+     select acc_num,bal from customer where acc_num=accnum;
+     end;
+

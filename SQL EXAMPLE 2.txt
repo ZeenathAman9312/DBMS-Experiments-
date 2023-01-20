@@ -1,0 +1,79 @@
+Experiment - 2
+
+INSERT INTO DLOCATION(DLOC,DNO) VALUES
+('Houstan','1'),
+('Stafford','4'),
+('Bellaire','5'),
+('Sugarland','5'),
+('Houstan','');
+
+
+INSERT INTO PROJECT (PNAME,PNO,  PLOCATION, DNO) VALUES
+('ProductX',1,'Bellaire','5'),
+('ProductY',2,'Sugarland','5'),
+('ProductZ',3,'Houstan','5'),
+('Computerization',10,'Stafford','4'),
+('Reorganization',20,'Houstan','1'),
+('Newbenefits',30,'Stafford','4');
+
+
+INSERT INTO WORKS_ON(ESSN,PNO,HOURS) VALUES('123456789',1,32),('123456789',2,47),
+('666884444',3,40),
+('453453453',1,20),
+('333445555',2,20),
+('333445555',1,10),
+('333445555',3,10),
+('333445555',10,10),
+('999887777',20,10),
+('999887777',30,30),
+('987987987',10,10),
+('987987987',11,35),
+('987654321',30,5),
+('987654321',31,20),
+('888665555',20,15);
+b) Find the names of the employees who work on all the projects controlled by the department Research.
+------------------------------------------------------
+ SELECT DISTINCT E.FNAME,E.LNAME FROM EMPLOYEE E,DEPARTMENT D,PROJECT P, WORKS_ON W WHERE D.DNAME='Research' AND D.DNO=P.DNO AND W.ESSN=E.SSN AND P.PNO=W.PNO;
+
+
+
+c) List the project number, name and no. Of employees who work on that project for all the projects.
+------------------------------------------------------
+SELECT P.PNO,P.PNAME,COUNT(W.ESSN) FROM PROJECT P,WORKS_ON W WHERE P.PNO=W.PNO GROUP BY P.PNO,P.PNAME;
+
+
+d) List the names of all the projects controlled by the departments department wise.
+------------------------------------------------------
+SELECT P.PNAME,D.DNAME FROM PROJECT P,DEPARTMENT D WHERE P.DNO=D.DNO;
+
+
+
+e) Retrieve the names of employees who work on all projects that John works on.
+-------------------------------------------------------
+SELECT DISTINCT E.FNAME,E.LNAME FROM EMPLOYEE E,WORKS_ON W WHERE E.SSN=W.ESSN AND W.PNO IN(SELECT W.PNO FROM EMPLOYEE E,WORKS_ON W WHER E E.SSN=W.ESSN AND E.FNAME='John');
+
+
+
+f) List the project numbers for projects that involve an employee either as worker or as a manager of the department that controls the project.
+--------------------------------------------------------
+SELECT DISTINCT P.PNO FROM PROJECT P,DEPARTMENT D,EMPLOYEE E WHERE D.MGRSSN=E.SSN AND D.DNO=P.DNO UNION(SELECT DISTINCT P.PNO FROM EMPLOYEE E,PROJECT P,WORKS_ON W WHERE E.SSN=W.ESSN AND P.PNO=W.PNO);
+
+
+g) List the names of all employees in one department who work more than 10 hours on one specific project.
+--------------------------------------------------------
+SELECT E.FNAME,E.LNAME FROM EMPLOYEE E,PROJECT P,DEPARTMENT D,WORKS_ON W WHERE D.DNO=E.DNO AND D.DNAME='Research' AND D.DNO=P.DNO AND P.PNAME='ProductX' AND P.PNO=W.PNO AND W.ESSN=E.SSN AND W.HOURS>10;
+
+h) For each project, list the project name and total hours (by all employees) spent on that project.
+--------------------------------------------------------
+SELECT P.PNAME,SUM(W.HOURS) FROM PROJECT P,WORKS_ON W WHERE P.PNO=W.PNO GROUP BY P.PNAME,P.PNO;
+
+i) Retrieve the names of all employees who work on every project.
+---------------------------------------------------------
+SELECT E.FNAME FROM EMPLOYEE E WHERE E.SSN IN (SELECT W.ESSN FROM WORKS_ON W WHERE W.PNO=ALL(SELECT PNO FROM PROJECT));
+
+
+j) Retrieve the names of all employees who do not work on any project.
+----------------------------------------------------------
+SELECT E.FNAME,E.LNAME FROM EMPLOYEE E WHERE E.SSN NOT IN(SELECT W.ESSN FROM WORKS_ON W);
+
+

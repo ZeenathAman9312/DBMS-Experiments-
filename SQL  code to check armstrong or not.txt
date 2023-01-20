@@ -1,0 +1,18 @@
+9) Write a procedure to check whether the given number is Armstrong or not.
+
+CREATE PROCEDURE Armstrongsss(IN N INT)
+BEGIN
+DECLARE M INT;
+DECLARE S INT;
+DECLARE temp INT;
+DECLARE len INT;
+SET temp=N;
+SET S=0;
+SET len=CHAR_LENGTH(N);
+WHILE N>0 DO
+SET M=MOD(N,10);
+SET S=S+ POW(M,len);
+SET N =N DIV 10;
+END WHILE;
+SELECT   if(S=temp, "armstrong number", "not an armstrong number");
+END;

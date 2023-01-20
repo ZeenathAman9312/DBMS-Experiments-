@@ -1,0 +1,81 @@
+                                                                                        Experiment  - 1
+
+
+
+CREATE TABLE DEPARTMENT (DNO VARCHAR(20) PRIMARY KEY, DNAME VARCHAR(20),MGRSTARTDATE DATE);
+
+CREATE TABLE EMPLOYEE (FNAME VARCHAR(20), MNAME VARCHAR(20), LNAME VARCHAR(20), SSN VARCHAR (20) PRIMARY KEY, DOB DATE, ADDRESS VARCHAR (20), GENDER VARCHAR(10),  SALARY INTEGER, SUPERSSN VARCHAR(20) REFERENCES EMPLOYEE (SSN), DNO VARCHAR(20) REFERENCES DEPARTMENT (DNO));
+
+NOTE: Once DEPARTMENT and EMPLOYEE tables are created we must alter department table to add foreign constraint MGRSSN using sql command
+
+ALTER TABLE DEPARTMENT ADD MGRSSN VARCHAR(20) REFERENCES EMPLOYEE (SSN);
+
+CREATE TABLE DEPENDENT (ESSN VARCHAR(20) REFERENCES EMPLOYEE(SSN), DEPENDENTNAME VARCHAR(20), GENDER VARCHAR(20), DOB DATE, RELATIONSHIP VARCHAR(20));
+
+CREATE TABLE DLOCATION(DLOC VARCHAR(20),DNO VARCHAR(20) REFERENCES DEPARTMENT(DNO), PRIMARY KEY(DNO, DLOC));
+
+CREATE TABLE PROJECT (PNAME VARCHAR(20),PNO INTEGER PRIMARY KEY,  PLOCATION VARCHAR(20), DNO VARCHAR(20) REFERENCES DEPARTMENT (DNO));
+
+
+CREATE TABLE WORKS_ON(ESSN VARCHAR(20) REFERENCES EMPLOYEE(SSN),PNO INTEGER REFERENCES PROJECT(PNO), PRIMARY KEY (ESSN, PNO), HOURS INTEGER);
+
+INSERT DATA INTO EMPLOYEE:
+-----------------------------------------
+INSERT INTO EMPLOYEE (FNAME , MNAME , LNAME , SSN , DOB , ADDRESS , GENDER ,  SALARY , SUPERSSN , DNO ) VALUES
+('John','B','Smith','123456789','1965-02-09','731 Fondren,Houstan, TX','M',30000,'333445555',5),
+('Franklin','T','Wong','333445555','1955-12-08','638 Voss,Houstan,TX','M',40000,'888665555',5),
+('Alicia','J','Zelaya','999887777','1968-01-19','3321 Castle,Spring,TX','F',25000,'987654321',4),('Jennifer','S','Wallance','987654321','1941-06-20','291 Berry, Bellaire, TX','F',43000,'888665555',4),('Ramesh','K','Narayana','666884444','1962-09-15','975 Fire Oak, Humble, TX ','M',38000,'333445555',5),('Joyce','A','English','453453453','1972-07-31','5631 Rice,Houstan, TX','F',25000,'333445555',5),
+('Ahmad','V','Jabbar','987987987','1969-03-22','980 Dallas, Houstan, TX','M',25000,'987987987',4),
+('James','E','Brog','888665555','1937-10-10','450 Stone,Houstan, TX','M',55000,'NULL',1);
+
+INSERT INTO DEPARTMENT:
+--------------------------------------
+INSERT INTO DEPARTMENT (DNO, DNAME,MGRSTARTDATE,MGRSSN) VALUES
+('5','Research','1988-05-22','333445555'),('4','Administration','1995-01-01','987654321'),('1','Headquarters','1981-06-19','888665555');
+
+INSERT INTO DEPENDENT:
+------------------------------------
+INSERT INTO DEPENDENT (ESSN,DEPENDENTNAME,GENDER,DOB, RELATIONSHIP) VALUES('333445555','Alice','F','1986-04-05','Daughter'),('333445555','Theodore','M','1983-10-25','Son'),('333445555','Joy','F','1958-05-03','Spouse'),('987654321','Abner','M','1942-02-28','Spouse'),('123456789','Michael','M','1988-01-04','Son'),('123456789','Elizabeth','F','1967-05-05','Spouse');
+
+A)Insert 5 to 10 rows into all the tables.
+------------------------------------------------------
+
+B)Display all employees’ names along with their department names.
+-----------------------------------------------------------------------------------------------
+SELECT FNAME,LNAME,DNAME FROM EMPLOYEE,DEPARTMENT WHERE EMPLOYEE.DNO=DEPARTMENT.DNO;
+
+C)Display all employees’ names along with their dependent details.
+---------------------------------------------------------------------------------------------
+SELECT FNAME,LNAME,DEPENDENTNAME FROM EMPLOYEE,DEPENDENT WHERE DEPENDENT.ESSN=EMPLOYEE.SSN;
+
+
+D)Display name and address of all employees who work for Research department.
+-----------------------------------------------------------------------------------------------
+SELECT FNAME,LNAME,ADDRESS FROM EMPLOYEE, DEPARTMENT WHERE EMPLOYEE.DNO =  DEPARTMENT.DNO AND DNAME = 'Research';
+ 
+E)List the names of all employees with two or more dependents.
+---------------------------------------------------------------------------------------
+SELECT LNAME,FNAME FROM EMPLOYEE WHERE(SELECT COUNT(*) FROM DEPENDENT WHERE SSN=ESSN)>=2;
+
+F)List the names of employee who have no dependents.
+----------------------------------------------------------------------------
+SELECT FNAME, LNAME FROM EMPLOYEE WHERE NOT EXISTS (SELECT *
+FROM DEPENDENT WHERE SSN = ESSN);
+
+G)List the names of employees who have at least one dependent.
+----------------------------------------------------------------------------------------
+SELECT FNAME, LNAME FROM EMPLOYEE WHERE EXISTS (SELECT * FROM DEPENDENT WHERE SSN = ESSN) AND EXISTS (SELECT * FROM DEPARTMENT WHERE SSN = MGRSSN);
+
+H)List the names of the employees along with names of their supervisors using aliases.
+----------------------------------------------------------------------------------------------------
+SELECT E1.FNAME,E1.LNAME,E2.FNAME AS SUPERVISOR FROM EMPLOYEE E1,EMPLOYEE E2 WHERE E2.SSN=E1.SUPERSSN; 
+
+I)Display name of the department and name of manager for all the departments.
+-----------------------------------------------------------------------------------------------------
+SELECT DNAME,FNAME FROM EMPLOYEE E, DEPARTMENT D WHERE E.SSN=D.MGRSSN;
+
+J) Display the name of each employee who has a dependent with the same first name and gender as the employee.
+------------------------------------------------------------------------------------------------------
+SELECT E.FNAME, E.LNAME FROM EMPLOYEE AS E WHERE E.SSN IN (SELECT ESSN FROM EMPLOYEE,DEPENDENT WHERE FNAME = DEPENDENTNAME AND EMPLOYEE.GENDER = DEPENDENT.GENDER);
+
+

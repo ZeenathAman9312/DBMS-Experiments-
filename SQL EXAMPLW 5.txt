@@ -1,0 +1,3 @@
+7) Create a view dept from department with only dept_no and location.
+create view dept as select DNO as dept_no,DLOC as location from DLOCATION;
+
