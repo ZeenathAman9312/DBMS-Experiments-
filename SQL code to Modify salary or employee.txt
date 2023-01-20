@@ -1,0 +1,25 @@
+Create a cursor to modify the salary of all employees belonging to 'Research' department by 150%.
+     /*   create table employee(ename varchar(20),dname varchar(20),sal numeric);   */
+     /*  insert records in employee table */
+    
+    delimiter //   
+    create procedure sal_update(in x  varchar(20))
+    begin
+    declare flag int default 0;
+    declare  s int default 0;
+    declare upd_cur cursor for select sal from employee where dname=x;
+    declare continue handler for not found set flag=1;
+    open upd_cur;
+    getRec: LOOP
+            fetch upd_cur into s;
+            if flag=1 then
+               LEAVE getRec;
+            end if;
+            update employee set sal=sal+(s*150/100) where dname=x;
+            END  LOOP  getRec;
+    close upd_cur;
+    end //
+    delimiter ;
+    call sal_update('Research');
+    
+

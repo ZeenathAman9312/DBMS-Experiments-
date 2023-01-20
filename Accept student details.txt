@@ -1,0 +1,7 @@
+ Write a procedure which accepts the student number and displays the department in which he belongs to.
+
+create procedure studentinfo(IN sid int)
+  begin
+ select sno,sname,cgpa from student where sno=sid;
+  end;
+
